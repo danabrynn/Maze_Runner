@@ -50,7 +50,7 @@ void Maze::generateMaze(int width, int height) {
         }
     }
     srand(time(0));
-    recursivelyGenerateMaze(maze[0][0]);
+    recursivelyGenerateMaze(maze[width/2][height/2]);
 }
 
 /**
@@ -73,9 +73,33 @@ void Maze::recursivelyGenerateMaze(Cell & cell) {
 }
 
 /**
+ * Returns a cell from the maze
+ * @param x - x coordinate of the cell
+ * @param y - y coordinate of the cell
+*/
+Maze::Cell Maze::getCell(int x, int y) const {
+    return maze[x][y];
+}
+
+/**
+ * Returns maze width
+*/
+int Maze::getWidth() {
+    return width;
+}
+
+/**
+ * Returns maze height
+*/
+int Maze::getHeight() {
+    return height;
+}
+
+
+/**
  * Prints a representation of maze to console
 */
-void Maze::printMaze() {
+void Maze::printMaze(int x, int y) {
     // print top border
     for (int j = 0; j < width; j++) {
         std::cout << " __";
@@ -87,9 +111,19 @@ void Maze::printMaze() {
         std::cout << '|';
         for (int j = 0; j < width; j++) {
             if (!maze[j][i].down_path) {
-                std::cout << "__";
+                if (x == j && y == i) {
+                    std::cout << "_";
+                    formattedPrint('X');
+                } else {
+                    std::cout << "__";
+                }
             } else {
-                std::cout << "  ";
+                if (x == j && y == i) {
+                    std::cout << " ";
+                    formattedPrint('X');
+                } else {
+                    std::cout << "  ";
+                }
             }
             if (!maze[j][i].right_path) {
                 std::cout << '|';
@@ -97,6 +131,7 @@ void Maze::printMaze() {
                 std::cout << ' ';
             }
         }
+        if (i == height - 1) std::cout << " <- Goal";
         std::cout << "\n";
     }
 }
@@ -143,5 +178,12 @@ void Maze::removeWall(Cell & cellA, Cell & cellB) {
         cellA.up_path = true;
         cellB.down_path = true;
     } 
+}
+
+/**
+ * helper for printMaze
+*/
+void Maze::formattedPrint(char x) {
+    std::cout << "\033[1m" << "\033[32m" << x << "\033[0m";
 }
 

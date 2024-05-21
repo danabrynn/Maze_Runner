@@ -7,6 +7,7 @@
 
 class Maze { 
     public:
+        static const int GRID_SIZE = 3;
         
         /**
          * Constructor to create a random maze
@@ -28,11 +29,8 @@ class Maze {
         /**
          * Prints a representation of maze to console
         */
-        void printMaze();
+        void printMaze(int x = -1, int y = -1);
 
-
-
-    private:
         /**
          * Struct representing each cell in the maze. Comtaining the cell's x and y coordinates, visited status, 
          * and how it is connected to neighboring cells.
@@ -47,6 +45,25 @@ class Maze {
             bool down_path = false;
             bool isVisited = false;
         };
+
+        /**
+         * Returns a cell from the maze
+         * @param x - x coordinate of the cell
+         * @param y - y coordinate of the cell
+        */
+        Cell getCell(int x, int y) const;
+
+        /**
+         * Returns maze width
+        */
+        int getWidth();
+
+        /**
+         * Returns maze height
+        */
+        int getHeight();
+
+    private:
 
         int width;
         int height;
@@ -79,6 +96,11 @@ class Maze {
          * @param cellB - second cell
         */
         void removeWall(Cell & cellA, Cell & cellB);
+
+        /**
+         * helper for printMaze
+        */
+        void formattedPrint(char x);
 
 };
 

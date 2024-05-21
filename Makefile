@@ -8,7 +8,7 @@ CXXFLAGS = -Wall -Wextra -std=c++11
 TARGET = my_program
 
 # Define source and object files
-SRCS = main.cpp maze.cpp
+SRCS = main.cpp maze.cpp consolegame.cpp
 OBJS = $(SRCS:.cpp=.o)
 
 # Default rule
@@ -23,8 +23,9 @@ $(TARGET): $(OBJS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Dependency rules
-main.o: maze.h
+main.o: maze.h consolegame.h
 maze.o: maze.h
+consolegame.o: consolegame.h maze.h
 
 # Rule to clean up the directory
 clean:

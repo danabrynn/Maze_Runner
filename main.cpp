@@ -1,7 +1,10 @@
 #include "maze.h"
+#include "consolegame.h"
 
 int main() {
     Maze myMaze;
-    myMaze.printMaze();
+    ConsoleGame consoleGame;
+    consoleGame.getInput(myMaze);
+    // myMaze.printMaze();
     return 0;
 }
