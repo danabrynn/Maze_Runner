@@ -2,7 +2,7 @@
 CXX = g++
 
 # Define compiler flags
-CXXFLAGS = -Wall -Wextra -std=c++11
+CXXFLAGS = -Wall -Wextra -std=c++14
 
 # Define the target executable
 TARGET = my_program
@@ -23,7 +23,7 @@ $(TARGET): $(OBJS)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 # Dependency rules
-main.o: maze.h consolegame.h
+main.o: consolegame.h
 maze.o: maze.h
 consolegame.o: consolegame.h maze.h
 

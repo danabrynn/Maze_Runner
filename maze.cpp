@@ -41,9 +41,9 @@ Maze::~Maze() {
  * @param height - maze height
 */
 void Maze::generateMaze(int width, int height) {
-    maze = new struct Cell*[width];
+    maze = new Cell*[width];
     for (int i = 0; i < width; i++) {
-        maze[i] = new struct Cell[height];
+        maze[i] = new Cell[height];
         for (int j = 0; j < height; j++) {
             maze[i][j].x = i;
             maze[i][j].y = j;
@@ -98,6 +98,8 @@ int Maze::getHeight() {
 
 /**
  * Prints a representation of maze to console
+ * @param x - optional parameter, x coordinate of point to mark on maze
+ * @param y - optional parameter, y coordinate of point to mark on maze
 */
 void Maze::printMaze(int x, int y) {
     // print top border
@@ -182,6 +184,7 @@ void Maze::removeWall(Cell & cellA, Cell & cellB) {
 
 /**
  * helper for printMaze
+ * @param x - char to print 
 */
 void Maze::formattedPrint(char x) {
     std::cout << "\033[1m" << "\033[32m" << x << "\033[0m";

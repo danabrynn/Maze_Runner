@@ -24,10 +24,12 @@ class Maze {
         /**
          * Destructor; frees all cells associated with maze
         */
-        ~Maze();
+        virtual ~Maze();
 
         /**
          * Prints a representation of maze to console
+         * @param x - optional parameter, x coordinate of point to mark on maze
+         * @param y - optional parameter, y coordinate of point to mark on maze
         */
         void printMaze(int x = -1, int y = -1);
 
@@ -99,6 +101,7 @@ class Maze {
 
         /**
          * helper for printMaze
+         * @param x - char to print 
         */
         void formattedPrint(char x);
 

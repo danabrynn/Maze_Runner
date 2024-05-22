@@ -3,6 +3,9 @@
 
 #include <iostream>
 #include <string>
+#include <memory> 
+#include <limits>
+
 #include "maze.h"
 
 
@@ -10,17 +13,23 @@ class ConsoleGame {
 
     public:
         /**
+         * Constructor to create a console game. Initializes player coordinates to (0,0).
+        */
+        ConsoleGame();
+
+        /**
          * Continuously gets input from user to allow movement through the maze via console
          * @param maze - the maze
         */
-        void getInput(Maze & maze);
+        void getInput();
 
 
 
     private:
         // Current player x and y coordinates in maze
-        int x = 0;
-        int y = 0;
+        int x;
+        int y;
+        std::unique_ptr<Maze> maze;
 
         /**
          * Responds to player input
@@ -35,6 +44,17 @@ class ConsoleGame {
          * @param mazeWidth - width of maze
         */
         void printCenteredTitle(std::string title, int mazeWidth);
+
+        /**
+         * Generates a new maze based on user input
+        */
+        void createMaze();
+
+        /**
+         * Gets an integer from console. Displays error message and reprompts user if integer not entered properly.
+         * @param message - message to display prompting user for input
+        */
+        int getIntegerFromConsole(std::string message);
 
 
 };
