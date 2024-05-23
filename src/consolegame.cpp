@@ -7,6 +7,7 @@
 #define CYAN    "\033[36m"
 #define WHITE   "\033[37m"
 #define YELLOW  "\033[33m"
+#define MAGENTA "\033[35m"
 #define BOLD    "\033[1m"
 #define UNDERLINE "\033[4m"
 
@@ -34,6 +35,10 @@ void ConsoleGame::getInput() {
         system("clear");
         printCenteredTitle("Maze Generator 3000", maze->getWidth());
         maze->printMaze(x, y);
+        if (x == maze->getWidth() - 1 && y == maze->getHeight() -1) {
+            endGame();
+            return;
+        }
         std::cout << BLUE << "\nEnter W/A/S/D to move, M to generate new maze (Q to quit): " << RESET;
         std::cin >> input;
         input = toupper(input);
@@ -110,5 +115,20 @@ int ConsoleGame::getIntegerFromConsole(std::string message) {
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             return variable;
         }
+    }
+}
+
+/**
+ * Responds to user reaching target
+*/
+void ConsoleGame::endGame() {
+    std::cout << BOLD << MAGENTA << "\nCONGRATULATIONS!!!" << RESET << std::endl;
+    std::cout << "Generate new maze? (Y/N): ";
+    char input;
+    std::cin >> input;
+    input = toupper(input);
+    if (input == 'Y') {
+        createMaze();
+        getInput();
     }
 }

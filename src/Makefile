@@ -5,7 +5,7 @@ CXX = g++
 CXXFLAGS = -Wall -Wextra -std=c++14
 
 # Define the target executable
-TARGET = my_program
+TARGET = maisy
 
 # Define source and object files
 SRCS = main.cpp maze.cpp consolegame.cpp

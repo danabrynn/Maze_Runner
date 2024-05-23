@@ -56,6 +56,11 @@ class ConsoleGame {
         */
         int getIntegerFromConsole(std::string message);
 
+        /**
+         * Responds to user reaching target
+        */
+        void endGame();
+
 
 };
 
