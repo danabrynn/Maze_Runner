@@ -1,6 +1,6 @@
-# Maze Generator
+# Maze Runner
 
-Maze Generator generates randomized mazes of arbitrary size and lets users move through the maze to reach the end point.
+Maze Runner randomly generates mazes of arbitrary size and lets users move through the maze to reach the end point.
 
 ![MazeScreenshot](https://github.com/danabrynn/Maze_Generator/assets/109255139/bf8ceb44-1790-4aa9-8cd2-632cc74bea4e)
 
@@ -10,6 +10,8 @@ Mazes generated recursively using depth-first search. Additional maze generation
 ## Installation
 Currently only runs on Unix-like operating systems (Linux, macOS)
 ```
+cd src
 make
+./maisy
 ```
 
