@@ -57,15 +57,19 @@ void ConsoleGame::respondToInput(char input, Maze::Cell cell) {
     switch (input) {
         case 'W':
             if (cell.up_path) y--;
+            recordCurrentPosition();
             break;
         case 'A':
             if (cell.left_path) x--;
+            recordCurrentPosition();
             break;
         case 'S':
             if (cell.down_path) y++;
+            recordCurrentPosition();
             break;
         case 'D':
             if (cell.right_path) x++;
+            recordCurrentPosition();
             break;
         case 'M':
             createMaze();
@@ -96,6 +100,8 @@ void ConsoleGame::createMaze() {
     maze = std::make_unique<Maze>(width, height);
     x = 0;
     y = 0;
+    positions.clear();
+    recordCurrentPosition();
 }
 
 /**
@@ -122,7 +128,13 @@ int ConsoleGame::getIntegerFromConsole(std::string message) {
  * Responds to user reaching target
 */
 void ConsoleGame::endGame() {
-    std::cout << BOLD << MAGENTA << "\nCONGRATULATIONS!!!" << RESET << std::endl;
+    for (const auto& position : positions) {
+        system("clear");
+        printCenteredTitle("Maze Generator 3000", maze->getWidth());
+        maze->printMaze(std::get<0>(position), std::get<1>(position));
+        std::cout << BOLD << MAGENTA << "\nCONGRATULATIONS!!!" << RESET << std::endl;
+        usleep(50000);
+    }
     std::cout << "Generate new maze? (Y/N): ";
     char input;
     std::cin >> input;
@@ -131,4 +143,11 @@ void ConsoleGame::endGame() {
         createMaze();
         getInput();
     }
+}
+
+/**
+ * Records current x and y position in maze
+*/
+void ConsoleGame::recordCurrentPosition() {
+    positions.push_back(std::make_tuple(x, y));
 }

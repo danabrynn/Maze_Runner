@@ -5,6 +5,9 @@
 #include <string>
 #include <memory> 
 #include <limits>
+#include <vector>
+#include <tuple> 
+#include <unistd.h>
 
 #include "maze.h"
 
@@ -30,6 +33,7 @@ class ConsoleGame {
         int x;
         int y;
         std::unique_ptr<Maze> maze;
+        std::vector<std::tuple<int, int>> positions; 
 
         /**
          * Responds to player input
@@ -60,6 +64,11 @@ class ConsoleGame {
          * Responds to user reaching target
         */
         void endGame();
+
+        /**
+         * Records current x and y position in maze
+        */
+        void recordCurrentPosition();
 
 
 };
