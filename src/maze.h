@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <stdlib.h>
+#include <unistd.h>
 
 class Maze { 
     public:
@@ -11,15 +12,11 @@ class Maze {
         
         /**
          * Constructor to create a random maze
-        */
-        Maze();
-
-        /**
-         * Constructor to create a random maze
          * @param width - number of cells in maze width
          * @param height - number of cells in maze height
+         * @param animate - show maze generation process
         */
-        Maze(int width, int height);
+        Maze(int width = 35, int height = 20, bool animate = false);
 
         /**
          * Destructor; frees all cells associated with maze
@@ -70,6 +67,7 @@ class Maze {
         int width;
         int height;
         struct Cell** maze;
+        bool animate;
 
         /**
          * Randomly generates a maze

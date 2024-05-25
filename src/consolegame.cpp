@@ -97,7 +97,13 @@ void ConsoleGame::printCenteredTitle(std::string title, int mazeWidth) {
 void ConsoleGame::createMaze() {
     int width = getIntegerFromConsole("Enter the maze width: ");
     int height = getIntegerFromConsole("Enter the maze height: ");
-    maze = std::make_unique<Maze>(width, height);
+    bool animate = false;
+    std::cout << "Show animation of maze generation? (Y/N): ";
+    char input;
+    std::cin >> input;
+    input = toupper(input);
+    if (input == 'Y') animate = true;
+    maze = std::make_unique<Maze>(width, height, animate);
     x = 0;
     y = 0;
     positions.clear();

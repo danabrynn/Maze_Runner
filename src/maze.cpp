@@ -1,23 +1,16 @@
 #include "maze.h"
 
-/**
- * Constructor to create a random maze
-*/
-Maze::Maze()
-    : width(35),
-      height(20) 
-{
-    generateMaze(width, height);
-}
 
 /**
  * Constructor to create a random maze
  * @param width - number of cells in maze width
  * @param height - number of cells in maze height
+ * @param animate - show maze generation process
 */
-Maze::Maze(int width, int height)
+Maze::Maze(int width, int height, bool animate)
     : width(width),
-      height(height) 
+      height(height),
+      animate(animate) 
 {
     generateMaze(width, height);
 }
@@ -64,9 +57,12 @@ void Maze::recursivelyGenerateMaze(Cell & cell) {
         int next_index = rand() % unvisitedNeighbors.size();
         Cell * next_cell = unvisitedNeighbors[next_index];
         removeWall(cell, *next_cell);
-        // printMaze();
-        // std::cout << "cell x: " << cell.x << " cell y: " << cell.y << std::endl;
-        // std::cout << "next cell x: " << next_cell->x << " cell y: " << next_cell->y << std::endl;
+        if (animate) {
+            system("clear");
+            std::cout << "Maze Generation : depth first search starting at maze center" << "\n";
+            printMaze();
+            usleep(30000);
+        }
         recursivelyGenerateMaze(*next_cell);
         unvisitedNeighbors = getUnvisitedNeighbors(cell);
     }
