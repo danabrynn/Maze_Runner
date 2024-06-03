@@ -97,13 +97,21 @@ void ConsoleGame::printCenteredTitle(std::string title, int mazeWidth) {
 void ConsoleGame::createMaze() {
     int width = getIntegerFromConsole("Enter the maze width: ");
     int height = getIntegerFromConsole("Enter the maze height: ");
+    char input;
+
+    Maze::Algorithm algorithm = Maze::DFS;
+    std::cout << "Algorithms:\n\tD - Depth First Search \n\tK - Kruskal's Algorithm \nMaze Generation Algorithm to Use: ";
+    std::cin >> input;
+    input = toupper(input);
+    if (input == 'K') algorithm = Maze::Kruskal;
+
     bool animate = false;
     std::cout << "Show animation of maze generation? (Y/N): ";
-    char input;
     std::cin >> input;
     input = toupper(input);
     if (input == 'Y') animate = true;
-    maze = std::make_unique<Maze>(width, height, animate);
+
+    maze = std::make_unique<Maze>(width, height, animate, algorithm);
     x = 0;
     y = 0;
     positions.clear();

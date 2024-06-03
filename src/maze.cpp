@@ -1,18 +1,22 @@
 #include "maze.h"
 
+static const int RIGHT_WALL = 0;
+static const int DOWN_WALL = 1;
 
 /**
  * Constructor to create a random maze
  * @param width - number of cells in maze width
  * @param height - number of cells in maze height
  * @param animate - show maze generation process
+ * @param algorithm - maze generation algorithm to use (DFS, Kruskal)
 */
-Maze::Maze(int width, int height, bool animate)
+Maze::Maze(int width, int height, bool animate, Algorithm algorithm)
     : width(width),
       height(height),
-      animate(animate) 
+      animate(animate),
+      rng(std::random_device{}())
 {
-    generateMaze(width, height);
+    generateMaze(width, height, algorithm);
 }
 
 /**
@@ -32,8 +36,9 @@ Maze::~Maze() {
  * Randomly generates a maze
  * @param width - maze width
  * @param height - maze height
+ * @param algorithm - maze generation algorithm to use
 */
-void Maze::generateMaze(int width, int height) {
+void Maze::generateMaze(int width, int height, Algorithm algorithm) {
     maze = new Cell*[width];
     for (int i = 0; i < width; i++) {
         maze[i] = new Cell[height];
@@ -42,8 +47,11 @@ void Maze::generateMaze(int width, int height) {
             maze[i][j].y = j;
         }
     }
-    srand(time(0));
-    recursivelyGenerateMaze(maze[width/2][height/2]);
+    if (algorithm == DFS) {
+        recursivelyGenerateMaze(maze[width/2][height/2]);
+    } else if (algorithm == Kruskal) {
+        kruskalGenerateMaze();
+    }
 }
 
 /**
@@ -53,18 +61,37 @@ void Maze::generateMaze(int width, int height) {
 void Maze::recursivelyGenerateMaze(Cell & cell) {
     cell.isVisited = true;
     auto unvisitedNeighbors = getUnvisitedNeighbors(cell);
+    std::uniform_int_distribution<int> dist(0, unvisitedNeighbors.size() - 1);
     while (!unvisitedNeighbors.empty()) {
-        int next_index = rand() % unvisitedNeighbors.size();
+        int next_index = dist(rng);
         Cell * next_cell = unvisitedNeighbors[next_index];
         removeWall(cell, *next_cell);
-        if (animate) {
-            system("clear");
-            std::cout << "Maze Generation : depth first search starting at maze center" << "\n";
-            printMaze();
-            usleep(30000);
-        }
+        animateMaze("Maze Generation : depth first search starting at maze center");
         recursivelyGenerateMaze(*next_cell);
         unvisitedNeighbors = getUnvisitedNeighbors(cell);
+        dist = std::uniform_int_distribution<int>(0, unvisitedNeighbors.size() - 1);
+    }
+}
+
+/**
+ * Generates maze using Kruskal's algorithm
+*/
+void Maze::kruskalGenerateMaze() {
+    auto walls = getRandomizedListOfWalls();
+    DisjointSet cell_set(width*height);
+    int cell_number,  next_cell_number;
+    for (const auto& wall : walls) {
+        cell_number = std::get<0>(wall);
+        if (std::get<1>(wall) == RIGHT_WALL) {
+            next_cell_number = cell_number + 1;
+        } else {
+            next_cell_number = cell_number + width;
+        }
+        if (cell_set.find(cell_number) != cell_set.find(next_cell_number)) {
+            removeWall(maze[cell_number % width][cell_number / width], maze[next_cell_number % width][next_cell_number / width]);
+            cell_set.setUnion(cell_number, next_cell_number);
+            animateMaze("Maze Generation : Kruskal's Algorithm");
+        }
     }
 }
 
@@ -90,7 +117,6 @@ int Maze::getWidth() {
 int Maze::getHeight() {
     return height;
 }
-
 
 /**
  * Prints a representation of maze to console
@@ -186,3 +212,48 @@ void Maze::formattedPrint(char x) {
     std::cout << "\033[1m" << "\033[32m" << x << "\033[0m";
 }
 
+/**
+ * Returns int representing cell's location in maze grid
+ * @param x - cell's x coordinate in maze
+ * @param y - cell's y coordinate in maze
+*/
+int Maze::getCellInteger(int x, int y) {
+    return (y * width) + x;
+}
+
+/**
+ * Returns a list of all the walls in a maze in a randomized order. Wall represented as a tuple
+ * with first int storing the cell's position in the maze (getCellInteger(x, y)) and the second int 
+ * storing whether the wall is a RIGHT_WALL or DOWN_WALL.
+*/
+std::vector<std::tuple<int, int>> Maze::getRandomizedListOfWalls() {
+    std::vector<std::tuple<int, int>> walls;
+    for(int y = 0; y < height; y++) {
+        for(int x = 0; x < width; x++) {
+            std::cout << "x: " << x << "y: " << y << std::endl;
+            if (x != width -1) {
+                walls.push_back(std::make_tuple(getCellInteger(x, y), RIGHT_WALL));
+            }
+            if (y != height -1) {
+                walls.push_back(std::make_tuple(getCellInteger(x, y), DOWN_WALL));
+            }
+        }
+    }
+    std::shuffle(walls.begin(), walls.end(), rng);
+    return walls;
+}
+
+/**
+ * Clears terminal window, prints current state of maze, and suspends execution for sleepTime if 
+ * this->animate = true. Otherwise does nothing.
+ * @param title - string to print above maze
+ * @param sleepTime - length of time to sleep in microseconds, must be < 1000000
+*/
+void Maze::animateMaze(std::string title, int sleepTime) {
+    if (this->animate) {
+        system("clear");
+        std::cout << title << "\n";
+        printMaze();
+        usleep(sleepTime);
+    }
+}
