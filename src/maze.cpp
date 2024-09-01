@@ -122,8 +122,10 @@ int Maze::getHeight() {
  * Prints a representation of maze to console
  * @param x - optional parameter, x coordinate of point to mark on maze
  * @param y - optional parameter, y coordinate of point to mark on maze
+ * @param positions - optional parameter, set of all positions in the maze to demarcate specifically during printing. 
+ *                    Positions are indicated by cell number (getCellInteger(int x, int y))
 */
-void Maze::printMaze(int x, int y) {
+void Maze::printMaze(int x, int y, const std::set<int> * positions) {
     // print top border
     for (int j = 0; j < width; j++) {
         std::cout << " __";
@@ -135,18 +137,24 @@ void Maze::printMaze(int x, int y) {
         std::cout << '|';
         for (int j = 0; j < width; j++) {
             if (!maze[j][i].down_path) {
+                std::cout << "_";
+                // single point on maze to print
                 if (x == j && y == i) {
-                    std::cout << "_";
                     formattedPrint('X');
+                // positions set provided and currently on position tile
+                } else if (positions && (*positions).find(getCellInteger(j, i)) != (*positions).end()) {
+                    formattedPrint('*', "\033[36m");
                 } else {
-                    std::cout << "__";
+                    std::cout << "_";
                 }
             } else {
+                std::cout << " ";
                 if (x == j && y == i) {
-                    std::cout << " ";
                     formattedPrint('X');
+                } else if (positions && (*positions).find(getCellInteger(j, i)) != (*positions).end()) {
+                    formattedPrint('*', "\033[36m");
                 } else {
-                    std::cout << "  ";
+                    std::cout << " ";
                 }
             }
             if (!maze[j][i].right_path) {
@@ -165,19 +173,25 @@ void Maze::printMaze(int x, int y) {
  * and left of a cell are considered its neighbors. A cell will be marked as visted if there is an existing
  * path to the cell.
  * @param cell - cell whose neighbors will be returned
+ * @param ignoreWalls - if ignoreWalls is true, all unvisited neighbors will be returned. Otherwise only neighbors 
+ *                      with a direct passage between them (no wall) will be returned.
 */
-std::vector<Maze::Cell*> Maze::getUnvisitedNeighbors(Cell & cell) const {
+std::vector<Maze::Cell*> Maze::getUnvisitedNeighbors(Cell & cell, bool ignoreWalls) const {
     std::vector<Maze::Cell*> unvisitedNeighbors;
-    if (cell.x > 0 && !(maze[cell.x - 1][cell.y].isVisited)) {
+    if (cell.x > 0 && !(maze[cell.x - 1][cell.y].isVisited) && 
+    (ignoreWalls || cell.left_path)) {
         unvisitedNeighbors.push_back(&maze[cell.x - 1][cell.y]);
     }
-    if (cell.x < width - 1 && !(maze[cell.x + 1][cell.y].isVisited)) {
+    if (cell.x < width - 1 && !(maze[cell.x + 1][cell.y].isVisited) && 
+    (ignoreWalls || cell.right_path)) {
         unvisitedNeighbors.push_back(&maze[cell.x + 1][cell.y]);
     }
-    if (cell.y > 0 && !(maze[cell.x][cell.y - 1].isVisited)) {
+    if (cell.y > 0 && !(maze[cell.x][cell.y - 1].isVisited) && 
+    (ignoreWalls || cell.up_path)) {
         unvisitedNeighbors.push_back(&maze[cell.x][cell.y - 1]);
     }
-    if (cell.y < height - 1 && !(maze[cell.x][cell.y + 1].isVisited)) {
+    if (cell.y < height - 1 && !(maze[cell.x][cell.y + 1].isVisited) && 
+    (ignoreWalls || cell.down_path)) {
         unvisitedNeighbors.push_back(&maze[cell.x][cell.y + 1]);
     }
     return unvisitedNeighbors;
@@ -207,9 +221,10 @@ void Maze::removeWall(Cell & cellA, Cell & cellB) {
 /**
  * helper for printMaze
  * @param x - char to print 
+ * @param colour - linux terminal colour code, default is green
 */
-void Maze::formattedPrint(char x) {
-    std::cout << "\033[1m" << "\033[32m" << x << "\033[0m";
+void Maze::formattedPrint(char x, std::string colour) {
+    std::cout << "\033[1m" << colour << x << "\033[0m";
 }
 
 /**

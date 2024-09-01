@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <random>
 #include <string>
+#include <set>
 
 #include "disjointset.h"
 
@@ -40,8 +41,10 @@ class Maze {
          * Prints a representation of maze to console
          * @param x - optional parameter, x coordinate of point to mark on maze
          * @param y - optional parameter, y coordinate of point to mark on maze
+         * @param positions - optional parameter, set of all positions in the maze to demarcate specifically during printing. 
+         *                    Positions are indicated by cell number (getCellInteger(int x, int y))
         */
-        void printMaze(int x = -1, int y = -1);
+        void printMaze(int x = -1, int y = -1, const std::set<int> * positions = nullptr);
 
         /**
          * Struct representing each cell in the maze. Comtaining the cell's x and y coordinates, visited status, 
@@ -75,6 +78,8 @@ class Maze {
         */
         int getHeight();
 
+        friend class MazeSolver;
+
     private:
         int width;
         int height;
@@ -106,8 +111,10 @@ class Maze {
          * and left of a cell are considered its neighbors. A cell will be marked as visted if there is an existing
          * path to the cell.
          * @param cell - cell whose neighbors will be returned
+         * @param ignoreWalls - if ignoreWalls is true, all unvisited neighbors will be returned. Otherwise only neighbors 
+         *                      with a direct passage between them (no wall) will be returned.
         */
-        std::vector<Cell*> getUnvisitedNeighbors(Cell & cell) const;
+        std::vector<Cell*> getUnvisitedNeighbors(Cell & cell, bool ignoreWalls = true) const;
 
         /**
          * Removes the wall between two cells if they are neighbors.
@@ -118,9 +125,10 @@ class Maze {
 
         /**
          * helper for printMaze
-         * @param x - char to print 
+         * @param x - char to print
+         * @param colour - linux terminal colour code, default is green
         */
-        void formattedPrint(char x);
+        void formattedPrint(char x, std::string colour = "\033[32m");
 
         /**
          * Returns int representing cell's location in maze grid
