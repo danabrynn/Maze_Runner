@@ -17,7 +17,8 @@
 ConsoleGame::ConsoleGame()
     : x(0),
       y(0),
-      maze(nullptr)
+      maze(nullptr),
+      displaySolution(false)
 {}
 
 
@@ -34,12 +35,16 @@ void ConsoleGame::getInput() {
         if (maze == nullptr) createMaze();
         system("clear");
         printCenteredTitle("Maze Generator 3000", maze->getWidth());
-        maze->printMaze(x, y);
+        if (displaySolution) {
+            maze->printMaze(x, y, &solution);
+        } else {
+            maze->printMaze(x, y);
+        }
         if (x == maze->getWidth() - 1 && y == maze->getHeight() -1) {
             endGame();
             return;
         }
-        std::cout << BLUE << "\nEnter W/A/S/D to move, M to generate new maze (Q to quit): " << RESET;
+        std::cout << BLUE << "\nEnter W/A/S/D to move, Z to toggle solution display, M to generate new maze (Q to quit): " << RESET;
         std::cin >> input;
         input = toupper(input);
         if (input != 'Q') {
@@ -73,6 +78,10 @@ void ConsoleGame::respondToInput(char input, Maze::Cell cell) {
             break;
         case 'M':
             createMaze();
+            break;
+        case 'Z':
+            displaySolution = !displaySolution;
+            break;
         default:
             break;
     }
@@ -116,6 +125,9 @@ void ConsoleGame::createMaze() {
     y = 0;
     positions.clear();
     recordCurrentPosition();
+    MazeSolver solver(*maze);
+    solution = solver.getSolution();
+    displaySolution = false;
 }
 
 /**
@@ -145,7 +157,11 @@ void ConsoleGame::endGame() {
     for (const auto& position : positions) {
         system("clear");
         printCenteredTitle("Maze Generator 3000", maze->getWidth());
-        maze->printMaze(std::get<0>(position), std::get<1>(position));
+        if (displaySolution) {
+            maze->printMaze(std::get<0>(position), std::get<1>(position), &solution);
+        } else {
+            maze->printMaze(std::get<0>(position), std::get<1>(position));
+        }
         std::cout << BOLD << MAGENTA << "\nCONGRATULATIONS!!!" << RESET << std::endl;
         usleep(50000);
     }

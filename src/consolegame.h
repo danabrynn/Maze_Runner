@@ -8,8 +8,10 @@
 #include <vector>
 #include <tuple> 
 #include <unistd.h>
+#include <set>
 
 #include "maze.h"
+#include "mazesolver.h"
 
 
 class ConsoleGame { 
@@ -33,7 +35,9 @@ class ConsoleGame {
         int x;
         int y;
         std::unique_ptr<Maze> maze;
-        std::vector<std::tuple<int, int>> positions; 
+        std::vector<std::tuple<int, int>> positions; // All positions player has visited
+        std::set<int> solution; // positions in maze solution
+        bool displaySolution;
 
         /**
          * Responds to player input
