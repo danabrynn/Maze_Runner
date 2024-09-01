@@ -8,7 +8,7 @@ CXXFLAGS = -Wall -Wextra -std=c++14
 TARGET = maisy
 
 # Define source and object files
-SRCS = main.cpp maze.cpp consolegame.cpp disjointset.cpp
+SRCS = main.cpp maze.cpp consolegame.cpp disjointset.cpp mazesolver.cpp
 OBJS = $(SRCS:.cpp=.o)
 
 # Default rule
@@ -25,8 +25,9 @@ $(TARGET): $(OBJS)
 # Dependency rules
 main.o: consolegame.h
 maze.o: maze.h disjointset.h
-consolegame.o: consolegame.h maze.h
+consolegame.o: consolegame.h maze.h mazesolver.h
 disjointset.o: disjointset.h
+mazesolver.cpp: mazesolver.h maze.h
 
 # Rule to clean up the directory
 clean:
